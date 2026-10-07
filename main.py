@@ -2,20 +2,25 @@ import pygame as pg
 import numpy as np
 
 def check_move(x, y):
+    global current_turn
+
     for r_index, center in enumerate(circles):
         for c_index, col in enumerate(center):
-            dist_squared = (x - col[0]) ** 2 + (y - col[1]) ** 2
+            if board[r_index][c_index] == 0:
+                dist_squared = (x - col[0]) ** 2 + (y - col[1]) ** 2
 
-            if r_index == 5:
-                if dist_squared <= 40 ** 2:
-                    board[r_index][c_index] = player
-                    return center
-            else:
-                position = board[r_index + 1][c_index]
+                if r_index == 5:
+                    if dist_squared <= 40 ** 2:
+                        board[r_index][c_index] = current_turn
+                        current_turn = 1 if current_turn == 2 else 2
+                        return center
+                else:
+                    position = board[r_index + 1][c_index]
 
-                if dist_squared <= 40 ** 2 and position != 0:
-                    board[r_index][c_index] = player
-                    return center
+                    if dist_squared <= 40 ** 2 and position != 0:
+                        board[r_index][c_index] = current_turn
+                        current_turn = 1 if current_turn == 2 else 2
+                        return center
     return None
 
 def get_winner():
@@ -29,6 +34,7 @@ running = True
 board = np.zeros((6,7), dtype=int)
 player = 1
 ai = 2
+current_turn = player
 
 HEADER = 50
 
