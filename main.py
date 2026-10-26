@@ -25,23 +25,22 @@ def check_move(x, y):
 
 DIRECTIONS = [(0, 1), (1, 0), (1, 1), (1, -1)]
 
-def get_winner(r, c):
-    check = board[r][c]
+def get_winner(index_r, index_c):
+    check = board[index_r][index_c]
     rows, cols = len(board), len(board[0])
 
     for dr, dc in DIRECTIONS:
         count = 1
-        start = end = (r, c)
+        start = end = (index_r, index_c)
 
-        rr, cc = r + dr, c + dc
+        rr, cc = index_r + dr, index_c + dc
         while 0 <= rr < rows and 0 <= cc < cols and board[rr][cc] == check:
             end = (rr, cc)
             count += 1
             rr += dr
             cc += dc
 
-        # walk backward
-        rr, cc = r - dr, c - dc
+        rr, cc = index_r - dr, index_c - dc
         while 0 <= rr < rows and 0 <= cc < cols and board[rr][cc] == check:
             start = (rr, cc)
             count += 1
@@ -52,8 +51,6 @@ def get_winner(r, c):
             return circles[start[0]][start[1]], circles[end[0]][end[1]]
 
     return None
-
-
 
 pg.init()
 screen = pg.display.set_mode((1000, 720))
@@ -101,13 +98,15 @@ while running:
             valid = check_move(mx, my)
 
             if valid:
-                print(get_winner(valid[0], valid[1]))
                 if get_winner(valid[0], valid[1]):
                     won = True
-                    print('ran')
                     line_start, line_end = get_winner(valid[0], valid[1])
-                    print(get_winner(valid[0], valid[1]))
-
+                    if current_turn == 1:
+                        winner = 2
+                        score['2'] += 1
+                    else:
+                        winner = 1
+                        score['1'] += 1
 
     screen.fill((0,20,100))
     screen.fill((30,30,30), rect=(0, 0, 1280, 100))
@@ -131,6 +130,10 @@ while running:
 
     if won:
         pg.draw.line(screen, (255, 255, 255), line_start, line_end, width=10)
+        pg.display.update()
+        pg.display.message_box('Winner', f'Player {winner} has won the game!', 'info')
+        board = np.zeros((6,7), dtype=int)
+        won = False
 
     pg.display.flip()
     clock.tick(60)
