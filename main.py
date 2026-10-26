@@ -23,38 +23,33 @@ def check_move(x, y):
                         return r_index, c_index
     return None
 
-def get_winner(index_r, index_c):
-    check = board[index_r][index_c]
-    first, last = circles[index_r][index_c]
-    same = 1
-    colours = [check]
+DIRECTIONS = [(0, 1), (1, 0), (1, 1), (1, -1)]
 
-    for i in range(1,4):
-        try:
-            if board[index_r][index_c + i] == check:
-                first = circles[index_r][index_c + i]
-                colours.append(check)
-                same += 1
-        except IndexError:
-            pass
+def get_winner(r, c):
+    check = board[r][c]
+    rows, cols = len(board), len(board[0])
 
-        try:
-            if board[index_r][index_c - i] == check and index_c - i >= 0:
-                last = circles[index_r][index_c - i]
-                colours.append(check)
-                same += 1
-        except IndexError:
-            pass
+    for dr, dc in DIRECTIONS:
+        count = 1
+        start = end = (r, c)
 
-    count = 0
-    count = [count+1 for i in colours if i == check]
-    print(count)
+        rr, cc = r + dr, c + dc
+        while 0 <= rr < rows and 0 <= cc < cols and board[rr][cc] == check:
+            end = (rr, cc)
+            count += 1
+            rr += dr
+            cc += dc
 
-    if len(count) == 4:
-        return first, last
+        # walk backward
+        rr, cc = r - dr, c - dc
+        while 0 <= rr < rows and 0 <= cc < cols and board[rr][cc] == check:
+            start = (rr, cc)
+            count += 1
+            rr -= dr
+            cc -= dc
 
-    print(same)
-    print(colours)
+        if count >= 4:
+            return circles[start[0]][start[1]], circles[end[0]][end[1]]
 
     return None
 
@@ -63,12 +58,18 @@ def get_winner(index_r, index_c):
 pg.init()
 screen = pg.display.set_mode((1000, 720))
 clock = pg.time.Clock()
+
+font = pg.font.SysFont('None', 56)
 running = True
 won = False
 
 board = np.zeros((6,7), dtype=int)
 player = 1
 ai = 2
+score = {
+    '1': 0,
+    '2': 0,
+}
 current_turn = player
 
 HEADER = 50
@@ -104,14 +105,19 @@ while running:
                 if get_winner(valid[0], valid[1]):
                     won = True
                     print('ran')
-                    #line_start, line_end = get_winner(valid[0], valid[1])
+                    line_start, line_end = get_winner(valid[0], valid[1])
                     print(get_winner(valid[0], valid[1]))
 
 
     screen.fill((0,20,100))
     screen.fill((30,30,30), rect=(0, 0, 1280, 100))
 
-    #Render here
+    turn_text = font.render(f'Player {current_turn} move', True, (255,255,255))
+    screen.blit(turn_text, (10, 10))
+
+    score_text = font.render(f'Player {score[str(current_turn)]} score', True, (255,255,255))
+    screen.blit(score_text, (500, 10))
+
     for circle in circles:
         for col in circle:
             pg.draw.circle(screen, (0,0,0), col, 40)
@@ -123,8 +129,8 @@ while running:
             elif col == 2:
                 pg.draw.circle(screen, (255, 254, 84), circles[r_index, c_index], 40)
 
-    # if won:
-    #     pg.draw.line(screen, (255, 255, 255), line_start, line_end, HEADER)
+    if won:
+        pg.draw.line(screen, (255, 255, 255), line_start, line_end, width=10)
 
     pg.display.flip()
     clock.tick(60)
