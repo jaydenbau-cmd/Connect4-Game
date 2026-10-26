@@ -113,10 +113,10 @@ while running:
     screen.fill((30,30,30), rect=(0, 0, 1280, 100))
 
     turn_text = font.render(f'Player {current_turn} move', True, (255,255,255))
-    screen.blit(turn_text, (10, 10))
+    screen.blit(turn_text, (100, 30))
 
-    score_text = font.render(f'Player {score[str(current_turn)]} score', True, (255,255,255))
-    screen.blit(score_text, (500, 10))
+    score_text = font.render(f'Player 1 Score: {score['1']} \nPlayer 2 Score: {score['2']}', True, (255,255,255))
+    screen.blit(score_text, (560, 10))
 
     for circle in circles:
         for col in circle:
