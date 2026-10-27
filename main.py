@@ -23,6 +23,12 @@ def check_move(x, y):
                         return r_index, c_index
     return None
 
+def is_board_full():
+    if 0 in board:
+        return False
+    else:
+        return True
+
 DIRECTIONS = [(0, 1), (1, 0), (1, 1), (1, -1)]
 
 def get_winner(index_r, index_c):
@@ -74,6 +80,7 @@ HEADER = 50
 y_increment = screen.get_height() / 7
 current_pos = [0.0,0.0]
 circles = np.zeros((6, 7), dtype=object)
+full = False
 
 for r_index, row in enumerate(board):
     if r_index == 0:
@@ -89,6 +96,11 @@ for r_index, row in enumerate(board):
         current_pos[0] += x_increment
 
 while running:
+    if is_board_full():
+        pg.display.message_box('Tie', 'There are no more available spaces. It''s a tie!', 'info')
+        board = np.zeros((6,7), dtype=int)
+        won = False
+
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
