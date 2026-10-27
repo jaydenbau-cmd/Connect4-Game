@@ -96,11 +96,6 @@ for r_index, row in enumerate(board):
         current_pos[0] += x_increment
 
 while running:
-    if is_board_full():
-        pg.display.message_box('Tie', 'There are no more available spaces. It''s a tie!', 'info')
-        board = np.zeros((6,7), dtype=int)
-        won = False
-
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
@@ -146,6 +141,11 @@ while running:
         pg.display.message_box('Winner', f'Player {winner} has won the game!', 'info')
         board = np.zeros((6,7), dtype=int)
         won = False
+
+    if is_board_full():
+        pg.display.update()
+        pg.display.message_box('Tie', "There are no more available spaces. It's a tie!", 'info')
+        board = np.zeros((6,7), dtype=int)
 
     pg.display.flip()
     clock.tick(60)
