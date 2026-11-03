@@ -35,26 +35,26 @@ def get_winner(index_r, index_c):
     check = board[index_r][index_c]
     rows, cols = len(board), len(board[0])
 
-    for dr, dc in DIRECTIONS:
+    for row_step, col_step in DIRECTIONS:
         count = 1
-        start = end = (index_r, index_c)
+        line_start = line_end = (index_r, index_c)
 
-        rr, cc = index_r + dr, index_c + dc
-        while 0 <= rr < rows and 0 <= cc < cols and board[rr][cc] == check:
-            end = (rr, cc)
+        current_row, current_col = index_r + row_step, index_c + col_step
+        while 0 <= current_row < rows and 0 <= current_col < cols and board[current_row][current_col] == check:
+            line_end = (current_row, current_col)
             count += 1
-            rr += dr
-            cc += dc
+            current_row += row_step
+            current_col += col_step
 
-        rr, cc = index_r - dr, index_c - dc
-        while 0 <= rr < rows and 0 <= cc < cols and board[rr][cc] == check:
-            start = (rr, cc)
+        current_row, current_col = index_r - row_step, index_c - col_step
+        while 0 <= current_row < rows and 0 <= current_col < cols and board[current_row][current_col] == check:
+            line_start = (current_row, current_col)
             count += 1
-            rr -= dr
-            cc -= dc
+            current_row -= row_step
+            current_col -= col_step
 
         if count >= 4:
-            return circles[start[0]][start[1]], circles[end[0]][end[1]]
+            return circles[line_start[0]][line_start[1]], circles[line_end[0]][line_end[1]]
 
     return None
 
